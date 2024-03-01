@@ -53,5 +53,5 @@ func main() {
 }
 
 func HelloServer(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "This should automatically update on the server")
+	fmt.Fprintf(w, "This should automatically update on the server v1")
 }
