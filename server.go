@@ -15,6 +15,7 @@ import (
 
 func main() {
 	err := godotenv.Load()
+
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
@@ -34,7 +35,9 @@ func main() {
 
 	// Open a connection
 	db, err := sql.Open("postgres", psqlInfo)
+
 	if err != nil {
+		fmt.Println("Error: Could not establish a connection with the database")
 		log.Fatal(err)
 	}
 	defer db.Close()
@@ -48,7 +51,7 @@ func main() {
 	fmt.Println("Successfully connected!")
 
 	http.HandleFunc("/", HelloServer)
-	fmt.Println("Starting server on port 8080")
+	fmt.Println("The server is listening on port 8080")
 	http.ListenAndServe(":8080", nil)
 }
 
