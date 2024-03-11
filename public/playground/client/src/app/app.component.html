@@ -1,0 +1,63 @@
+<h2>API Playground</h2>
+
+@for (endpoint of endpoints; track endpoint) {
+<p-accordion class="endpointWrapper p-2" [multiple]="true">
+  <p-accordionTab [header]="'[' + endpoint.method + ']' + ': ' + endpoint.name">
+    <div class="flex gap-2 flex-column p-2">
+      <label [for]="endpoint.name + '_' + endpoint.method">
+        Path
+      </label>
+      <input type="text"
+        class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+        pInputText [(ngModel)]="endpoint.path" [id]="endpoint.name + '_' + endpoint.method" />
+    </div>
+    @if (endpoint.body) {
+    <div class="flex gap-2 flex-column p-2">
+      <h3>Request</h3>
+      @for (entry of endpoint.fields; track $index) {
+      <div class="field">
+        <label [for]="endpoint.name + '_' + endpoint.method + entry.key">
+          {{ entry.key }}
+        </label>
+        @switch (entry.type) {
+        @case ('checkbox') {
+        <p-checkbox
+          class="text-base text-color surface-overlay p-2 surface-border border-round appearance-none outline-none focus:border-primary w-full"
+          [binary]="true" [(ngModel)]="endpoint.body[entry.key]"
+          [id]="endpoint.name + '_' + endpoint.method + entry.key"></p-checkbox>
+        }
+        @case ('text') {
+        <input type="text"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+          pInputText [(ngModel)]="endpoint.body[entry.key]" [id]="endpoint.name + '_' + endpoint.method + entry.key" />
+        }
+        @case ('number') {
+        <p-inputNumber
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+          [(ngModel)]="endpoint.body[entry.key]"
+          [id]="endpoint.name + '_' + endpoint.method + entry.key"></p-inputNumber>
+        }
+
+        }
+
+      </div>
+      }
+    </div>
+    }
+    <p-button label="Run" size="small" (onClick)="runRoute(endpoint)"></p-button>
+    <div>
+
+    </div>
+
+    @if (endpoint?.response) {
+    <p-accordion class="responseWrapper" [multiple]="true" styleClass="mt-2">
+      <p-accordionTab header="Response">
+        <div>
+          <pre>{{endpoint?.response | formatJson}}</pre>
+        </div>
+      </p-accordionTab>
+    </p-accordion>
+    }
+  </p-accordionTab>
+</p-accordion>
+}

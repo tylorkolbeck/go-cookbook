@@ -1,0 +1,8 @@
+
+{
+  "/endpoints": {
+    "target": "http://localhost:8080/endpoints",
+    "secure": false,
+    "changeOrigin": true
+  }
+}
