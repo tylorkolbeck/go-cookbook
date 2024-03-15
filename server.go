@@ -57,8 +57,12 @@ func main() {
 	router.POST("/login", func(c *gin.Context) {
 		userHandler.Login(c, authConfig)
 	})
+	router.GET("/users/:id", userHandler.GetUserByID)
 	router.GET("/users", userHandler.ListUsers)
 	router.GET("/verify/:token", userHandler.VerifyEmail)
+	router.DELETE("/users/:id", userHandler.DeleteUser)
+	router.PUT("/users/:id", userHandler.UpdateUser)
+
 	// COOKBOOKS
 	cookbookRepo := repository.NewInMemoryCookbookRepository()
 	cookbookService := service.NewCookbookService(cookbookRepo)

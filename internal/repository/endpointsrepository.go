@@ -92,6 +92,27 @@ func NewEndpointRepository() *EndpointRepository {
 			Method: "GET",
 			Path:   "/verify/:token",
 		},
+		{
+			Name:   "List Users",
+			Method: "GET",
+			Path:   "/users",
+		},
+		{
+			Name:   "Get User By ID",
+			Method: "GET",
+			Path:   "/users/:id",
+		},
+		{
+			Name:   "Delete User",
+			Method: "DELETE",
+			Path:   "/users/:id",
+		},
+		{
+			Name:   "Update User",
+			Method: "PUT",
+			Path:   "/users/:id",
+			Body:   dto.UpdateUserRequest{},
+		},
 	}
 
 	return &EndpointRepository{endpoints: endpoints}

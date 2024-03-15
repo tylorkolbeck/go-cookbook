@@ -1,7 +1,10 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
+	"github.com/tylorkolbeck/go-cookbook/api/v1/dto"
 	"github.com/tylorkolbeck/go-cookbook/auth"
 	"github.com/tylorkolbeck/go-cookbook/internal/model"
 	"github.com/tylorkolbeck/go-cookbook/internal/service"
@@ -26,6 +29,23 @@ func (h *UserHandler) ListUsers(c *gin.Context) {
 	}
 
 	c.JSON(200, users)
+}
+
+func (h *UserHandler) GetUserByID(c *gin.Context) {
+	id := c.Param("id")
+
+	user, err := h.service.GetUserByID(id)
+
+	if err != nil {
+		c.JSON(404, gin.H{"error": "User not found"})
+		return
+	}
+
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Could not marshal user"})
+	}
+
+	c.JSON(200, user)
 }
 
 func (h *UserHandler) CreateUser(c *gin.Context) {
@@ -89,4 +109,37 @@ func (h *UserHandler) VerifyEmail(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{"message": "Email verified"})
+}
+
+func (h *UserHandler) UpdateUser(c *gin.Context) {
+	id := c.Param("id")
+
+	var req dto.UpdateUserRequest
+
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updatedUser, err := h.service.UpdateUser(id, req)
+
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Could not update user"})
+		return
+	}
+
+	c.JSON(200, updatedUser)
+}
+
+func (h *UserHandler) DeleteUser(c *gin.Context) {
+	id := c.Param("id")
+
+	_, err := h.service.DeleteUser(id)
+
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Could not delete user"})
+		return
+	}
+
+	c.JSON(200, gin.H{"message": "User deleted"})
 }

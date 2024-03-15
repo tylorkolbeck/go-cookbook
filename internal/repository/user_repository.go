@@ -6,11 +6,11 @@ import (
 
 type UserRepository interface {
 	CreateUser(user model.User) (model.SafeUser, error)
-	FindUserByEmail(email string) (model.SafeUser, error)
-	FindUserByVerificationToken(token string) (model.SafeUser, error)
+	FindUserByEmail(email string) (model.User, error)
+	GetUserByID(id string) (model.User, error)
+	FindUserByVerificationToken(token string) (model.User, error)
 	SetUserEmailVerified(id string) (bool, error)
 	ListUsers() ([]model.SafeUser, error)
-	// FindUserByID(id string) (model.User, error)
-	// UpdateUser(id string, user model.User) (model.User, error)
-	// DeleteUser(id string) (string, error)
+	DeleteUser(id string) (string, error)
+	UpdateUser(id string, user model.User) (model.SafeUser, error)
 }

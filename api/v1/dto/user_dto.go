@@ -7,13 +7,15 @@ import (
 type UserBase struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
-}
-
-type CreateUserRequest struct {
-	UserBase
+	Name     string `json:"name"`
 }
 
 type UpdateUserRequest struct {
+	Email *string `json:"email"`
+	Name  *string `json:"name"`
+}
+
+type CreateUserRequest struct {
 	UserBase
 }
 
