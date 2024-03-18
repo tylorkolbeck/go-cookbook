@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthConfig struct {
@@ -12,6 +13,10 @@ type AuthConfig struct {
 
 func NewAuthConfig(signingKey []byte) *AuthConfig {
 	return &AuthConfig{SigningKey: signingKey}
+}
+
+func SaltPassword(password string) ([]byte, error) {
+	return bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 }
 
 func (ac *AuthConfig) GenerateToken(userID string) (string, error) {

@@ -14,6 +14,7 @@ import (
 	"github.com/tylorkolbeck/go-cookbook/auth"
 	"github.com/tylorkolbeck/go-cookbook/internal/repository"
 	"github.com/tylorkolbeck/go-cookbook/internal/service"
+	"github.com/tylorkolbeck/go-cookbook/middleware"
 
 	"github.com/joho/godotenv"
 
@@ -58,7 +59,7 @@ func main() {
 		userHandler.Login(c, authConfig)
 	})
 	router.GET("/users/:id", userHandler.GetUserByID)
-	router.GET("/users", userHandler.ListUsers)
+	router.GET("/users", middleware.AuthMiddleware(), userHandler.ListUsers)
 	router.GET("/verify/:token", userHandler.VerifyEmail)
 	router.DELETE("/users/:id", userHandler.DeleteUser)
 	router.PUT("/users/:id", userHandler.UpdateUser)

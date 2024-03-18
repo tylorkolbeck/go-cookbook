@@ -1,4 +1,30 @@
-<h2>API Playground</h2>
+<div class="sticky">
+  <p-menubar>
+    <ng-template pTemplate="start">
+      <div class="flex gap-2 align-items-end">
+          <p-chip [style]="{'background': token ? '#03fc98' : '#ffef45'}" [label]="token ? 'Authenticated' : 'Not Authenticated'"></p-chip>
+        <form class="flex align-items-end flex-wrap gap-2" (ngSubmit)="login()">
+          <div>
+            <label for="username">Email</label>
+            <input type="text"
+              class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+              pInputText [(ngModel)]="email" id="username" [value]="email" />
+          </div>
+          <div>
+            <label for="password">Password</label>
+            <input type="password"
+              class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+              pInputText [(ngModel)]="password" id="password" [value]="password" /> 
+            </div>
+            <div>
+              <p-button label="Login" type="submit" class="w-full"></p-button>
+          </div>
+        </form>
+      </div>
+    </ng-template>
+  </p-menubar>
+</div>
+
 
 @for (endpoint of endpoints; track endpoint) {
 <p-accordion class="endpointWrapper p-2" [multiple]="true">
@@ -51,9 +77,19 @@
 
     @if (endpoint?.response) {
     <p-accordion class="responseWrapper" [multiple]="true" styleClass="mt-2">
-      <p-accordionTab header="Response">
+      <p-accordionTab header="Response" [ariaExpanded]="true">
         <div>
           <pre>{{endpoint?.response | formatJson}}</pre>
+        </div>
+      </p-accordionTab>
+    </p-accordion>
+    }
+
+    @if (endpoint?.error) {
+    <p-accordion class="errorWrapper" [multiple]="true" styleClass="mt-2">
+      <p-accordionTab header="Error" [ariaExpanded]="true">
+        <div>
+          <pre>{{endpoint?.error | formatJson}}</pre>
         </div>
       </p-accordionTab>
     </p-accordion>

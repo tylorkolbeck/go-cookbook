@@ -38,7 +38,8 @@ func (s *UserService) CreateUser(user model.User) (model.SafeUser, error) {
 		return model.SafeUser{}, errors.New("User with email already exists")
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	hashedPassword, err := auth.SaltPassword(user.Password)
+
 	user.EmailVerified = false
 	user.VerificationToken = uuid.New().String()
 

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/tylorkolbeck/go-cookbook/auth"
 	"github.com/tylorkolbeck/go-cookbook/internal/model"
 )
 
@@ -23,16 +24,17 @@ type InMemoryUserRepository struct {
 }
 
 func NewInMemoryUserRepository() *InMemoryUserRepository {
+	saltedPassword, _ := auth.SaltPassword("Test123456")
 	return &InMemoryUserRepository{
 		users: map[string]model.User{
 			"1e8d1d67-f61a-436b-8f43-4e0a094a5568": {
 				ID:            "1e8d1d67-f61a-436b-8f43-4e0a094a5568",
-				Email:         "test@test.com",
-				Password:      "", // Assuming Password is required but omitted here
+				Email:         "tylor@email.com",
+				Password:      string(saltedPassword),
 				Name:          "Tylor",
 				Created_at:    time.Now(),
 				Updated_at:    time.Now(),
-				EmailVerified: false,
+				EmailVerified: true,
 				Role:          "admin",
 				// VerificationToken field is omitted; add if necessary
 			},
