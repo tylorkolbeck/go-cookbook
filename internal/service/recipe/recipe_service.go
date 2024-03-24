@@ -3,6 +3,7 @@ package recipe
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/tylorkolbeck/go-cookbook/api/v1/dto"
 	"github.com/tylorkolbeck/go-cookbook/internal/model"
 	"github.com/tylorkolbeck/go-cookbook/internal/repository/recipeRepo"
@@ -32,7 +33,7 @@ func (s *RecipeService) Update(recipe_id string, newRecipeValues dto.UpdateRecip
 	}
 
 	updatedRecipe := model.Recipe{
-		User_id:      existing_recipe.User_id,
+		UserId:       existing_recipe.UserId,
 		Name:         newRecipeValues.Name,
 		Description:  newRecipeValues.Description,
 		Ingredients:  newRecipeValues.Ingredients,
@@ -57,7 +58,7 @@ func (s *RecipeService) Delete(recipe_id string) (string, error) {
 
 func (s *RecipeService) Add(recipe dto.CreateRecipeRequest) (model.Recipe, error) {
 	newRecipe := model.Recipe{
-		User_id:      "1",
+		UserId:       uuid.New(),
 		Name:         recipe.Name,
 		Description:  recipe.Description,
 		Ingredients:  recipe.Ingredients,

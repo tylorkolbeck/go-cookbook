@@ -1,4 +1,4 @@
-package repository
+package endpointRepo
 
 import (
 	"github.com/tylorkolbeck/go-cookbook/api/v1/dto"

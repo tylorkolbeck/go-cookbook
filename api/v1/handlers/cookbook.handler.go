@@ -1,4 +1,4 @@
-package cookbookHandler
+package handlers
 
 import (
 	"net/http"

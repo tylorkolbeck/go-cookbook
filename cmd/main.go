@@ -1,5 +1,7 @@
 package main
 
+// TODO: Better organize services
+
 import (
 	"fmt"
 	"log"
@@ -13,17 +15,17 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/tylorkolbeck/go-cookbook/api/v1/handlers"
-	"github.com/tylorkolbeck/go-cookbook/api/v1/handlers/cookbookHandler"
 	"github.com/tylorkolbeck/go-cookbook/auth"
 	"github.com/tylorkolbeck/go-cookbook/internal/db"
-	"github.com/tylorkolbeck/go-cookbook/internal/repository"
+
 	"github.com/tylorkolbeck/go-cookbook/internal/repository/cookbookRepo"
+	"github.com/tylorkolbeck/go-cookbook/internal/repository/endpointRepo"
 	"github.com/tylorkolbeck/go-cookbook/internal/repository/recipeRepo"
+	"github.com/tylorkolbeck/go-cookbook/internal/repository/userRepo"
 	"github.com/tylorkolbeck/go-cookbook/internal/service/cookbook"
 	"github.com/tylorkolbeck/go-cookbook/internal/service/endpoints"
 	"github.com/tylorkolbeck/go-cookbook/internal/service/recipe"
 	"github.com/tylorkolbeck/go-cookbook/internal/service/user"
-	"github.com/tylorkolbeck/go-cookbook/middleware"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq" // Import pq for side effects, such as registering its driver.
@@ -69,38 +71,22 @@ func main() {
 	authConfig := auth.NewAuthConfig([]byte(os.Getenv("TOKEN_SECRET")))
 
 	// USERS
-	userRepository := repository.NewInMemoryUserRepository()
+	userRepository := userRepo.NewPostgresUserRepository(dbConn)
 	userService := user.Initialize(userRepository, *authConfig)
-	userHandler := handlers.NewUserHandler(userService)
-
-	router.POST("/users", userHandler.CreateUser)
-	router.POST("/login", func(c *gin.Context) {
-		userHandler.Login(c, authConfig)
-	})
-	router.GET("/users/:id", userHandler.GetUserByID)
-	router.GET("/users", middleware.AuthMiddleware(), userHandler.ListUsers)
-	router.GET("/verify/:token", userHandler.VerifyEmail)
-	router.DELETE("/users/:id", userHandler.DeleteUser)
-	router.PUT("/users/:id", userHandler.UpdateUser)
+	handlers.RegisterUserRoutes(router, userService, authConfig)
 
 	// COOKBOOKS
 	cookbookRepo := cookbookRepo.NewPostgresCookbookRepository(dbConn)
-	// cookbookRepo := cookbookRepo.NewInmemoryCookbookRepository()
 	cookbookService := cookbook.Initialize(cookbookRepo)
-	cookbookHandler.RegisterCookbookRoutes(router, cookbookService)
+	handlers.RegisterCookbookRoutes(router, cookbookService)
 
 	// RECIPES
-	recipeRepo := recipeRepo.NewInMemoryRecipeRepository()
+	recipeRepo := recipeRepo.NewPostgresRecipeRepository(dbConn)
 	recipeService := recipe.Initialize(recipeRepo)
-	recipeHandler := handlers.NewRecipeHandler(recipeService)
-	router.GET("/recipes", recipeHandler.ListRecipes)
-	router.POST("/recipes", recipeHandler.CreateRecipe)
-	router.GET("/recipes/:id", recipeHandler.GetRecipe)
-	router.PUT("/recipes/:id", recipeHandler.UpdateRecipe)
-	router.DELETE("/recipes/:id", recipeHandler.DeleteRecipe)
+	handlers.RegisterRecipeRoutes(router, recipeService)
 
 	// ENDPOINTS
-	endpointRepo := repository.NewEndpointRepository()
+	endpointRepo := endpointRepo.NewEndpointRepository()
 	endpointService := endpoints.Initialize(*endpointRepo)
 	endpointHandler := handlers.NewEndpointsHandler(endpointService)
 

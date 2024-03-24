@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/tylorkolbeck/go-cookbook/api/v1/dto"
 	"github.com/tylorkolbeck/go-cookbook/auth"
 	"github.com/tylorkolbeck/go-cookbook/internal/model"
@@ -12,6 +13,20 @@ import (
 
 type UserHandler struct {
 	service *user.UserService
+}
+
+func RegisterUserRoutes(router *gin.Engine, service *user.UserService, authConfig *auth.AuthConfig) {
+	handler := NewUserHandler(service)
+
+	router.GET("/users", handler.ListUsers)
+	router.GET("/users/:id", handler.GetUserByID)
+	router.POST("/users", handler.CreateUser)
+	router.POST("/login", func(c *gin.Context) {
+		handler.Login(c, authConfig)
+	})
+	router.PUT("/users/:id", handler.UpdateUser)
+	router.DELETE("/users/:id", handler.DeleteUser)
+	router.GET("/verify/:token", handler.VerifyEmail)
 }
 
 func NewUserHandler(service *user.UserService) *UserHandler {

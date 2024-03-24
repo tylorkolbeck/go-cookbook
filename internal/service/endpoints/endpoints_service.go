@@ -2,14 +2,14 @@ package endpoints
 
 import (
 	"github.com/tylorkolbeck/go-cookbook/internal/model"
-	"github.com/tylorkolbeck/go-cookbook/internal/repository"
+	"github.com/tylorkolbeck/go-cookbook/internal/repository/endpointRepo"
 )
 
 type EndpointsService struct {
-	repo repository.EndpointRepository
+	repo endpointRepo.EndpointRepository
 }
 
-func Initialize(repo repository.EndpointRepository) *EndpointsService {
+func Initialize(repo endpointRepo.EndpointRepository) *EndpointsService {
 	return &EndpointsService{repo: repo}
 }
 

@@ -2,15 +2,14 @@ package dto
 
 import (
 	"github.com/go-playground/validator/v10"
-	"github.com/tylorkolbeck/go-cookbook/internal/model"
 )
 
 type RecipeBase struct {
-	Name         string                    `json:"name"`
-	Description  string                    `json:"description"`
-	Public       bool                      `json:"public"`
-	Ingredients  []model.RecipeIngredient  `json:"ingredients"`
-	Instructions []model.RecipeInstruction `json:"instructions"`
+	Name         string `json:"name"`
+	Description  string `json:"description"`
+	Public       bool   `json:"public"`
+	Ingredients  []byte `json:"ingredients"`
+	Instructions []byte `json:"instructions"`
 }
 
 type CreateRecipeRequest struct {

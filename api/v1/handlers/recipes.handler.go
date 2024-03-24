@@ -12,6 +12,16 @@ type RecipeHandler struct {
 	service *recipe.RecipeService
 }
 
+func RegisterRecipeRoutes(router *gin.Engine, service *recipe.RecipeService) {
+	handler := NewRecipeHandler(service)
+
+	router.GET("/recipes", handler.ListRecipes)
+	router.GET("/recipes/:id", handler.GetRecipe)
+	router.PUT("/recipes/:id", handler.UpdateRecipe)
+	router.DELETE("/recipes/:id", handler.DeleteRecipe)
+	router.POST("/recipes", handler.CreateRecipe)
+}
+
 func NewRecipeHandler(service *recipe.RecipeService) *RecipeHandler {
 	return &RecipeHandler{service: service}
 }
