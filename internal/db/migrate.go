@@ -3,13 +3,16 @@ package db
 // TODO: Move seed logic out of this file
 
 import (
+	"encoding/json"
 	"log"
 
+	"github.com/google/uuid"
 	"github.com/tylorkolbeck/go-cookbook/internal/model"
 	"gorm.io/gorm"
 )
 
 func Seed(db *gorm.DB) error {
+	db.Exec("DELETE FROM recipes")
 	db.Exec("DELETE FROM cook_books")
 	db.Exec("DELETE FROM users")
 
@@ -39,10 +42,21 @@ func Seed(db *gorm.DB) error {
 		return result.Error
 	}
 
+	recipe1Ingredients := []model.RecipeIngredient{
+		{
+			ID:       uuid.New(),
+			Name:     "Chicken Breast",
+			Quantity: "2",
+			Unit:     "lbs",
+		},
+	}
+
+	instJSON, _ := json.Marshal(recipe1Ingredients)
+
 	recipe1 := model.Recipe{
 		Name:         "Chicken Parmesan",
 		Description:  "A classic chicken parmesan recipe.",
-		Ingredients:  []byte("Chicken, Parmesan, Tomato Sauce"),
+		Ingredients:  instJSON,
 		Instructions: []byte("Bread chicken, fry chicken, add sauce and cheese, bake."),
 		Public:       true,
 		UserId:       user1.ID,
