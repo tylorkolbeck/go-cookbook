@@ -1,13 +1,14 @@
 package model
 
-import "time"
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
 type CookBook struct {
-	Cookbook_id string    `json:"cookbook_id"`
-	User_id     string    `json:"user_id"`
-	Name        string    `json:"name"`
+	gorm.Model
+	CookBookID  uuid.UUID `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"id"`
+	Name        string    `gorm:"not null" json:"name"`
 	Description string    `json:"description"`
-	Public      bool      `json:"public"`
-	Created_at  time.Time `json:"created_at"`
-	Updated_at  time.Time `json:"updated_at"`
+	Public      bool      `gorm:"default:false" json:"public"`
 }

@@ -1,18 +1,16 @@
-package service
+package cookbook
 
 import (
-	"time"
-
 	"github.com/tylorkolbeck/go-cookbook/api/v1/dto"
 	"github.com/tylorkolbeck/go-cookbook/internal/model"
-	"github.com/tylorkolbeck/go-cookbook/internal/repository"
+	"github.com/tylorkolbeck/go-cookbook/internal/repository/cookbookRepo"
 )
 
 type CookbookService struct {
-	repo repository.CookbookRepository
+	repo cookbookRepo.CookbookRepository
 }
 
-func NewCookbookService(repo repository.CookbookRepository) *CookbookService {
+func Initialize(repo cookbookRepo.CookbookRepository) *CookbookService {
 	return &CookbookService{repo: repo}
 }
 
@@ -26,12 +24,9 @@ func (s *CookbookService) GetByID(id string) (model.CookBook, error) {
 
 func (s *CookbookService) Add(cookbook dto.AddCookbookRequest) (model.CookBook, error) {
 	newCookbook := model.CookBook{
-		User_id:     "1",
 		Name:        cookbook.Name,
 		Description: cookbook.Description,
 		Public:      cookbook.Public,
-		Created_at:  time.Now(),
-		Updated_at:  time.Now(),
 	}
 	return s.repo.Add(newCookbook)
 }

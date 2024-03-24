@@ -1,4 +1,4 @@
-package repository
+package cookbookRepo
 
 import (
 	"github.com/tylorkolbeck/go-cookbook/internal/model"

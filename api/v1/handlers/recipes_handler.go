@@ -5,14 +5,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/tylorkolbeck/go-cookbook/api/v1/dto"
-	"github.com/tylorkolbeck/go-cookbook/internal/service"
+	"github.com/tylorkolbeck/go-cookbook/internal/service/recipe"
 )
 
 type RecipeHandler struct {
-	service *service.RecipeService
+	service *recipe.RecipeService
 }
 
-func NewRecipeHandler(service *service.RecipeService) *RecipeHandler {
+func NewRecipeHandler(service *recipe.RecipeService) *RecipeHandler {
 	return &RecipeHandler{service: service}
 }
 

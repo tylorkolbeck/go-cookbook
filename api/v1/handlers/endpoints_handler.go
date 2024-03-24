@@ -4,14 +4,14 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/tylorkolbeck/go-cookbook/internal/service"
+	"github.com/tylorkolbeck/go-cookbook/internal/service/endpoints"
 )
 
 type EndpointsHandler struct {
-	service *service.EndpointsService
+	service *endpoints.EndpointsService
 }
 
-func NewEndpointsHandler(service *service.EndpointsService) *EndpointsHandler {
+func NewEndpointsHandler(service *endpoints.EndpointsService) *EndpointsHandler {
 	return &EndpointsHandler{
 		service: service,
 	}

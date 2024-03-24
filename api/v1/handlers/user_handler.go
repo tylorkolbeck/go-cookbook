@@ -7,14 +7,14 @@ import (
 	"github.com/tylorkolbeck/go-cookbook/api/v1/dto"
 	"github.com/tylorkolbeck/go-cookbook/auth"
 	"github.com/tylorkolbeck/go-cookbook/internal/model"
-	"github.com/tylorkolbeck/go-cookbook/internal/service"
+	"github.com/tylorkolbeck/go-cookbook/internal/service/user"
 )
 
 type UserHandler struct {
-	service *service.UserService
+	service *user.UserService
 }
 
-func NewUserHandler(service *service.UserService) *UserHandler {
+func NewUserHandler(service *user.UserService) *UserHandler {
 	return &UserHandler{
 		service: service,
 	}

@@ -1,27 +1,44 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"time"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/tylorkolbeck/go-cookbook/api/v1/handlers"
+	"github.com/tylorkolbeck/go-cookbook/api/v1/handlers/cookbookHandler"
 	"github.com/tylorkolbeck/go-cookbook/auth"
+	"github.com/tylorkolbeck/go-cookbook/internal/db"
 	"github.com/tylorkolbeck/go-cookbook/internal/repository"
-	"github.com/tylorkolbeck/go-cookbook/internal/service"
+	"github.com/tylorkolbeck/go-cookbook/internal/repository/cookbookRepo"
+	"github.com/tylorkolbeck/go-cookbook/internal/repository/recipeRepo"
+	"github.com/tylorkolbeck/go-cookbook/internal/service/cookbook"
+	"github.com/tylorkolbeck/go-cookbook/internal/service/endpoints"
+	"github.com/tylorkolbeck/go-cookbook/internal/service/recipe"
+	"github.com/tylorkolbeck/go-cookbook/internal/service/user"
 	"github.com/tylorkolbeck/go-cookbook/middleware"
 
 	"github.com/joho/godotenv"
-
 	_ "github.com/lib/pq" // Import pq for side effects, such as registering its driver.
 )
 
 func main() {
+	dbConn := ConnectToDb()
+
+	// Migrate the schema
+	dbErr := db.AutoMigrate(dbConn)
+
+	if dbErr != nil {
+		log.Fatal(dbErr)
+	}
+
 	// Load environment variables
 	err := godotenv.Load()
 
@@ -32,6 +49,7 @@ func main() {
 	// Create a new router
 	router := gin.Default()
 
+	// // Configure CORS
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:4200"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
@@ -48,12 +66,13 @@ func main() {
 	router.Static("/static", "./public/playground")
 
 	// Define routes
-	// USERS
-	// Initialize Auth
 	authConfig := auth.NewAuthConfig([]byte(os.Getenv("TOKEN_SECRET")))
+
+	// USERS
 	userRepository := repository.NewInMemoryUserRepository()
-	userService := service.NewUserService(userRepository, *authConfig)
+	userService := user.Initialize(userRepository, *authConfig)
 	userHandler := handlers.NewUserHandler(userService)
+
 	router.POST("/users", userHandler.CreateUser)
 	router.POST("/login", func(c *gin.Context) {
 		userHandler.Login(c, authConfig)
@@ -65,21 +84,15 @@ func main() {
 	router.PUT("/users/:id", userHandler.UpdateUser)
 
 	// COOKBOOKS
-	cookbookRepo := repository.NewInMemoryCookbookRepository()
-	cookbookService := service.NewCookbookService(cookbookRepo)
-	cookbookHandler := handlers.NewCookbookHandler(cookbookService)
-	router.GET("/cookbooks", cookbookHandler.ListCookbooks)
-	router.POST("/cookbooks", cookbookHandler.CreateCookbook)
-	router.GET("/cookbooks/:id", cookbookHandler.GetCookbook)
-	router.PUT("/cookbooks/:id", cookbookHandler.UpdateCookbook)
-	router.DELETE("/cookbooks/:id", cookbookHandler.DeleteCookbook)
+	cookbookRepo := cookbookRepo.NewPostgresCookbookRepository(dbConn)
+	// cookbookRepo := cookbookRepo.NewInmemoryCookbookRepository()
+	cookbookService := cookbook.Initialize(cookbookRepo)
+	cookbookHandler.RegisterCookbookRoutes(router, cookbookService)
 
 	// RECIPES
-	recipeRepo := repository.NewInMemoryRecipeRepository()
-	recipeService := service.NewRecipeService(recipeRepo)
+	recipeRepo := recipeRepo.NewInMemoryRecipeRepository()
+	recipeService := recipe.Initialize(recipeRepo)
 	recipeHandler := handlers.NewRecipeHandler(recipeService)
-
-	// RECIPES
 	router.GET("/recipes", recipeHandler.ListRecipes)
 	router.POST("/recipes", recipeHandler.CreateRecipe)
 	router.GET("/recipes/:id", recipeHandler.GetRecipe)
@@ -88,7 +101,7 @@ func main() {
 
 	// ENDPOINTS
 	endpointRepo := repository.NewEndpointRepository()
-	endpointService := service.NewEndpointsService(*endpointRepo)
+	endpointService := endpoints.Initialize(*endpointRepo)
 	endpointHandler := handlers.NewEndpointsHandler(endpointService)
 
 	// ENDPOINTS
@@ -98,41 +111,31 @@ func main() {
 
 	// Start the server
 	router.Run(":8080")
-
-	// ConnectToDb()
-	// StartHttpServer()
 }
 
-func HelloServer(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "This should automatically update on the server v1")
-}
+func ConnectToDb() *gorm.DB {
+	// dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=UTC",
+	// 	os.Getenv("DB_HOST"),
+	// 	os.Getenv("DB_USER"),
+	// 	os.Getenv("DB_PASSWORD"),
+	// 	os.Getenv("DB_NAME"),
+	// 	os.Getenv("DB_PORT"),
+	// )
 
-func StartHttpServer() {
-	http.HandleFunc("/", HelloServer)
-	fmt.Println("The server is listening on port 8080")
-	http.ListenAndServe(":8080", nil)
-}
+	dsn := "host=localhost user=postgres password=password dbname=cookbook port=5432 sslmode=disable TimeZone=UTC"
 
-func ConnectToDb() {
-	// Connection string
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		os.Getenv("DB_HOST"), 5432, os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
-
-	// Open a connection
-	db, err := sql.Open("postgres", psqlInfo)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 
 	if err != nil {
-		fmt.Println("Error: Could not establish a connection with the database")
 		log.Fatal(err)
+		panic("failed	to	connect database")
 	}
-	defer db.Close()
 
-	// Verify connection
-	err = db.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"")
 
 	fmt.Println("Successfully connected to the DB!")
+
+	return db
 }

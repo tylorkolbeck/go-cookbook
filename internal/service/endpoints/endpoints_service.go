@@ -1,4 +1,4 @@
-package service
+package endpoints
 
 import (
 	"github.com/tylorkolbeck/go-cookbook/internal/model"
@@ -9,7 +9,7 @@ type EndpointsService struct {
 	repo repository.EndpointRepository
 }
 
-func NewEndpointsService(repo repository.EndpointRepository) *EndpointsService {
+func Initialize(repo repository.EndpointRepository) *EndpointsService {
 	return &EndpointsService{repo: repo}
 }
 

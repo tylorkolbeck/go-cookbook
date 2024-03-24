@@ -1,8 +1,9 @@
-package repository
+package recipeRepo
 
 import (
 	"github.com/google/uuid"
 	"github.com/tylorkolbeck/go-cookbook/internal/model"
+	"github.com/tylorkolbeck/go-cookbook/internal/repository/repoErrors"
 )
 
 func NewInMemoryRecipeRepository() *InMemoryRecipeRepository {
@@ -98,7 +99,7 @@ func (r *InMemoryRecipeRepository) GetByID(id string) (model.Recipe, error) {
 			return c, nil
 		}
 	}
-	return model.Recipe{}, NotFoundError
+	return model.Recipe{}, repoErrors.NotFoundError
 }
 
 func (r *InMemoryRecipeRepository) Update(recipe_id string, recipe model.Recipe, existingRecipe model.Recipe) (model.Recipe, error) {
@@ -113,7 +114,7 @@ func (r *InMemoryRecipeRepository) Update(recipe_id string, recipe model.Recipe,
 			return r.recipes[i], nil
 		}
 	}
-	return model.Recipe{}, NotFoundError
+	return model.Recipe{}, repoErrors.NotFoundError
 }
 
 func (r *InMemoryRecipeRepository) Delete(recipe_id string) (string, error) {
@@ -123,5 +124,5 @@ func (r *InMemoryRecipeRepository) Delete(recipe_id string) (string, error) {
 			return recipe_id, nil
 		}
 	}
-	return "", NotFoundError
+	return "", repoErrors.NotFoundError
 }

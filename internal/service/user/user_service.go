@@ -1,4 +1,4 @@
-package service
+package user
 
 import (
 	"errors"
@@ -19,7 +19,7 @@ type UserService struct {
 	authConfig auth.AuthConfig
 }
 
-func NewUserService(repo repository.UserRepository, authConfig auth.AuthConfig) *UserService {
+func Initialize(repo repository.UserRepository, authConfig auth.AuthConfig) *UserService {
 	return &UserService{repo: repo, authConfig: authConfig}
 }
 
