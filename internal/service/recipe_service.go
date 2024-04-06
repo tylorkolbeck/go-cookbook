@@ -1,4 +1,4 @@
-package recipe
+package service
 
 import (
 	"time"
@@ -6,14 +6,14 @@ import (
 	"github.com/google/uuid"
 	"github.com/tylorkolbeck/go-cookbook/api/v1/dto"
 	"github.com/tylorkolbeck/go-cookbook/internal/model"
-	"github.com/tylorkolbeck/go-cookbook/internal/repository/recipeRepo"
+	"github.com/tylorkolbeck/go-cookbook/internal/repository"
 )
 
 type RecipeService struct {
-	repo recipeRepo.RecipeRepository
+	repo repository.RecipeRepository
 }
 
-func Initialize(repo recipeRepo.RecipeRepository) *RecipeService {
+func NewRecipeService(repo repository.RecipeRepository) *RecipeService {
 	return &RecipeService{repo: repo}
 }
 

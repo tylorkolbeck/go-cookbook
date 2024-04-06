@@ -8,14 +8,14 @@ import (
 	"github.com/tylorkolbeck/go-cookbook/api/v1/dto"
 	"github.com/tylorkolbeck/go-cookbook/auth"
 	"github.com/tylorkolbeck/go-cookbook/internal/model"
-	"github.com/tylorkolbeck/go-cookbook/internal/service/user"
+	"github.com/tylorkolbeck/go-cookbook/internal/service"
 )
 
 type UserHandler struct {
-	service *user.UserService
+	service *service.UserService
 }
 
-func RegisterUserRoutes(router *gin.Engine, service *user.UserService, authConfig *auth.AuthConfig) {
+func RegisterUserRoutes(router *gin.Engine, service *service.UserService, authConfig *auth.AuthConfig) *UserHandler {
 	handler := NewUserHandler(service)
 
 	router.GET("/users", handler.ListUsers)
@@ -27,9 +27,11 @@ func RegisterUserRoutes(router *gin.Engine, service *user.UserService, authConfi
 	router.PUT("/users/:id", handler.UpdateUser)
 	router.DELETE("/users/:id", handler.DeleteUser)
 	router.GET("/verify/:token", handler.VerifyEmail)
+
+	return NewUserHandler(service)
 }
 
-func NewUserHandler(service *user.UserService) *UserHandler {
+func NewUserHandler(service *service.UserService) *UserHandler {
 	return &UserHandler{
 		service: service,
 	}

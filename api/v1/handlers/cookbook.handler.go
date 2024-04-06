@@ -7,14 +7,14 @@ import (
 
 	"github.com/tylorkolbeck/go-cookbook/api/v1/dto"
 	"github.com/tylorkolbeck/go-cookbook/internal/model"
-	"github.com/tylorkolbeck/go-cookbook/internal/service/cookbook"
+	"github.com/tylorkolbeck/go-cookbook/internal/service"
 )
 
 type CookbookHandler struct {
-	service *cookbook.CookbookService
+	service *service.CookbookService
 }
 
-func RegisterCookbookRoutes(router *gin.Engine, service *cookbook.CookbookService) {
+func RegisterCookbookRoutes(router *gin.Engine, service *service.CookbookService) *CookbookHandler {
 	handler := NewCookbookHandler(service)
 
 	router.POST("/cookbooks", handler.CreateCookbook)
@@ -22,9 +22,11 @@ func RegisterCookbookRoutes(router *gin.Engine, service *cookbook.CookbookServic
 	router.GET("/cookbooks/:id", handler.GetCookbook)
 	router.PUT("/cookbooks/:id", handler.UpdateCookbook)
 	router.DELETE("/cookbooks/:id", handler.DeleteCookbook)
+
+	return NewCookbookHandler(service)
 }
 
-func NewCookbookHandler(service *cookbook.CookbookService) *CookbookHandler {
+func NewCookbookHandler(service *service.CookbookService) *CookbookHandler {
 	return &CookbookHandler{
 		service: service,
 	}

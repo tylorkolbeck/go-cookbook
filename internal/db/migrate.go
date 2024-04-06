@@ -72,11 +72,24 @@ func Seed(db *gorm.DB) error {
 }
 
 func AutoMigrate(db *gorm.DB) error {
-	MigrateCookbook(db)
-	MigrateUser(db)
-	MigrateRecipe(db)
+	var err error
 
-	Seed(db)
+	err = MigrateCookbook(db)
+	if err != nil {
+		return err
+	}
+
+	err = MigrateUser(db)
+	if err != nil {
+		return err
+	}
+
+	err = MigrateRecipe(db)
+	if err != nil {
+		return err
+	}
+
+	err = Seed(db)
 
 	return nil
 }

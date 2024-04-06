@@ -1,4 +1,4 @@
-package user
+package service
 
 import (
 	"errors"
@@ -8,18 +8,18 @@ import (
 	"github.com/google/uuid"
 	"github.com/tylorkolbeck/go-cookbook/api/v1/dto"
 	"github.com/tylorkolbeck/go-cookbook/internal/model"
-	"github.com/tylorkolbeck/go-cookbook/internal/repository/userRepo"
+	"github.com/tylorkolbeck/go-cookbook/internal/repository"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/tylorkolbeck/go-cookbook/auth"
 )
 
 type UserService struct {
-	repo       userRepo.UserRepository
+	repo       repository.UserRepository
 	authConfig auth.AuthConfig
 }
 
-func Initialize(repo userRepo.UserRepository, authConfig auth.AuthConfig) *UserService {
+func NewUserService(repo repository.UserRepository, authConfig auth.AuthConfig) *UserService {
 	return &UserService{repo: repo, authConfig: authConfig}
 }
 

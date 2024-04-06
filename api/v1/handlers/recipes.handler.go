@@ -5,14 +5,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/tylorkolbeck/go-cookbook/api/v1/dto"
-	"github.com/tylorkolbeck/go-cookbook/internal/service/recipe"
+	"github.com/tylorkolbeck/go-cookbook/internal/service"
 )
 
 type RecipeHandler struct {
-	service *recipe.RecipeService
+	service *service.RecipeService
 }
 
-func RegisterRecipeRoutes(router *gin.Engine, service *recipe.RecipeService) {
+func RegisterRecipeRoutes(router *gin.Engine, service *service.RecipeService) *RecipeHandler {
 	handler := NewRecipeHandler(service)
 
 	router.GET("/recipes", handler.ListRecipes)
@@ -20,9 +20,11 @@ func RegisterRecipeRoutes(router *gin.Engine, service *recipe.RecipeService) {
 	router.PUT("/recipes/:id", handler.UpdateRecipe)
 	router.DELETE("/recipes/:id", handler.DeleteRecipe)
 	router.POST("/recipes", handler.CreateRecipe)
+
+	return NewRecipeHandler(service)
 }
 
-func NewRecipeHandler(service *recipe.RecipeService) *RecipeHandler {
+func NewRecipeHandler(service *service.RecipeService) *RecipeHandler {
 	return &RecipeHandler{service: service}
 }
 

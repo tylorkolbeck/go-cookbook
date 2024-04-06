@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -11,8 +12,12 @@ type AuthConfig struct {
 	SigningKey []byte
 }
 
-func NewAuthConfig(signingKey []byte) *AuthConfig {
-	return &AuthConfig{SigningKey: signingKey}
+func NewAuthConfig(signingKey []byte) (*AuthConfig, error) {
+	if len(signingKey) == 0 {
+		return nil, errors.New("signing key cannot be empty")
+	}
+
+	return &AuthConfig{SigningKey: signingKey}, nil
 }
 
 func SaltPassword(password string) ([]byte, error) {

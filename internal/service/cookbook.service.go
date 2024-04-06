@@ -1,16 +1,16 @@
-package cookbook
+package service
 
 import (
 	"github.com/tylorkolbeck/go-cookbook/api/v1/dto"
 	"github.com/tylorkolbeck/go-cookbook/internal/model"
-	"github.com/tylorkolbeck/go-cookbook/internal/repository/cookbookRepo"
+	"github.com/tylorkolbeck/go-cookbook/internal/repository"
 )
 
 type CookbookService struct {
-	repo cookbookRepo.CookbookRepository
+	repo repository.CookbookRepository
 }
 
-func Initialize(repo cookbookRepo.CookbookRepository) *CookbookService {
+func NewCookbookService(repo repository.CookbookRepository) *CookbookService {
 	return &CookbookService{repo: repo}
 }
 
