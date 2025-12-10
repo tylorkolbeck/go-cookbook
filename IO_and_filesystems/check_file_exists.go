@@ -1,14 +1,20 @@
-package files
+package file
 
 import (
-	"fmt"
+	"errors"
+	"io/fs"
 	"os"
 )
 
 func FileExists(filePath string) (bool, error) {
-	if _, err := os.Stat(filePath); err != nil {
-		return false, fmt.Errorf("error checking for file: %v")
+	_, err := os.Stat(filePath)
+	if err == nil {
+		return true, nil
 	}
-
-	return true, nil
+	// if some error other than file does not exist
+	if !errors.Is(err, fs.ErrNotExist) {
+		return false, err
+	}
+	// file does not exist
+	return false, nil
 }
